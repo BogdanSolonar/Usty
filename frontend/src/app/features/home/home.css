@@ -1,0 +1,229 @@
+.home {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: clamp(24px, 6vh, 64px) clamp(20px, 6vw, 96px);
+  overflow: hidden;
+  /* базовий тон — глибокий сливово-нічний, між бурштином "Побачень" і синявою "Мрій" */
+  background: #17121c;
+}
+
+/* Фон = ті самі три фото, сильно розмиті й притемнені.
+   Кожне фото займає свою третину, тож кольори фону лежать саме "за" своєю карткою. */
+.home-backdrop {
+  position: absolute;
+  inset: -80px; /* ширше за екран, щоб розмиття не давало світлих країв */
+  display: flex;
+  filter: blur(70px) saturate(1.15);
+  opacity: 0.55;
+}
+
+.home-backdrop-part {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Поверх розмиття — м'яка віньєтка: темніше по краях, світліше в центрі */
+.home::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 0%, rgba(23, 18, 28, 0.35) 60%, rgba(23, 18, 28, 0.85) 100%);
+  pointer-events: none;
+}
+
+/* шапка пари у правому верхньому куті: я ♥ партнер */
+.couple-bar {
+  position: absolute;
+  top: 20px;
+  right: clamp(16px, 3vw, 32px);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.heart {
+  color: #ff6b9a;
+  font-size: 22px;
+  text-shadow: 0 0 12px rgba(255, 107, 154, 0.7);
+  animation: beat 1.8s ease-in-out infinite;
+}
+
+.partner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 16px 5px 5px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  color: white;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+}
+
+@keyframes beat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  15% {
+    transform: scale(1.18);
+  }
+  30% {
+    transform: scale(1);
+  }
+}
+
+/* вузький екран: лише аватарки, без імен */
+@media (max-width: 520px) {
+  .couple-bar {
+    gap: 6px;
+  }
+
+  .partner {
+    padding: 4px;
+  }
+
+  .partner-name {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heart {
+    animation: none;
+  }
+}
+
+.panels {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  gap: clamp(28px, 5vw, 80px);
+}
+
+.panel {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  /* вузькі вертикальні картки: ширина обмежена, висота від неї (3:5) */
+  width: clamp(200px, 22vw, 300px);
+  aspect-ratio: 3 / 5;
+  max-height: 78vh;
+  border-radius: 24px;
+  overflow: hidden;
+  color: white;
+  text-decoration: none;
+  background-color: #3a2c3f; /* поки фото не завантажилось */
+  background-size: cover;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s ease;
+}
+
+/* затемнення знизу, щоб текст читався на будь-якому фото */
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 6, 14, 0.8) 0%, rgba(10, 6, 14, 0.2) 50%, rgba(10, 6, 14, 0.05) 100%);
+  transition: opacity 0.45s ease;
+}
+
+/* "відблиск світла" зверху — проявляється при наведенні */
+.panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 236, 214, 0.28), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+/* Наведення / фокус з клавіатури: легке збільшення, тепле сяйво і світло */
+.panel:hover,
+.panel:focus-visible {
+  transform: scale(1.03);
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(255, 190, 150, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.22);
+  outline: none;
+}
+
+.panel:hover::before,
+.panel:focus-visible::before {
+  opacity: 0.8;
+}
+
+.panel:hover::after,
+.panel:focus-visible::after {
+  opacity: 1;
+}
+
+.panel:active {
+  transform: scale(1.01);
+}
+
+.panel-content {
+  position: relative;
+  z-index: 1;
+  padding: 28px 26px;
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: clamp(30px, 2.8vw, 42px);
+  line-height: 1.1;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+}
+
+.panel p {
+  margin: 8px 0 0;
+  font-size: 15px;
+  opacity: 0.85;
+}
+
+/* Планшет: три картки в ряд не влазять — переносимо */
+@media (max-width: 900px) {
+  .panels {
+    flex-wrap: wrap;
+  }
+
+  .panel {
+    width: clamp(200px, 40vw, 280px);
+  }
+}
+
+/* Телефон: картки одна під одною, ширші й нижчі */
+@media (max-width: 560px) {
+  .home {
+    padding-top: 84px; /* місце під профіль */
+  }
+
+  .panels {
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    width: 100%; /* інакше контейнер стискається і картки стають вужчими */
+  }
+
+  .panel {
+    width: min(100%, 360px);
+    aspect-ratio: 4 / 3;
+  }
+
+  /* на сенсорних екранах наведення немає — не залишаємо картку збільшеною */
+  .panel:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,47 @@
+<app-page-hero
+  [category]="info"
+  title="Історія"
+  backLink="/c/dates"
+  backLabel="Побачення"
+  [morph]="false"
+/>
+
+<main class="dates-bg">
+  <div class="page">
+    @if (loadError()) {
+      <p class="error">Не вдалося завантажити історію. Перевірте, що бекенд запущено.</p>
+    } @else if (loaded() && dates().length === 0) {
+      <div class="empty-state">
+        <div class="empty-emoji">📸</div>
+        <p>Тут з'являться побачення, позначені як «Реалізовано»</p>
+      </div>
+    } @else if (dates().length) {
+      <h2 class="section-title">✅ Реалізовані <span class="count">{{ dates().length }}</span></h2>
+    }
+
+    <div class="cards">
+      @for (d of dates(); track d.id; let i = $index) {
+        <app-date-tile [date]="d" [index]="i" (open)="openDetails(d)" />
+      }
+    </div>
+  </div>
+</main>
+
+@if (modal() === 'details' && selected()) {
+  <app-date-details
+    [date]="selected()!"
+    (closed)="close()"
+    (edit)="modal.set('form')"
+    (changed)="onChanged($event)"
+    (deleted)="onDeleted($event)"
+  />
+}
+@if (modal() === 'form' && selected(); as d) {
+  <app-entry-form
+    heading="Редагування"
+    [initial]="{ title: d.title, description: d.description, imageUrl: d.coverImageUrl }"
+    [saveFn]="saveFn"
+    (closed)="close()"
+    (saved)="onSaved($event)"
+  />
+}

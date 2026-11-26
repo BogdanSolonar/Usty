@@ -1,0 +1,44 @@
+<div class="cal-head">
+  <button type="button" class="cal-nav" (click)="move(-1)" aria-label="Попередній місяць">‹</button>
+  <strong>{{ title() }}</strong>
+  <button type="button" class="cal-nav" (click)="move(1)" aria-label="Наступний місяць">›</button>
+</div>
+
+<div class="cal-grid">
+  @for (w of weekDays; track w) {
+    <span class="cal-weekday">{{ w }}</span>
+  }
+  @for (cell of cells(); track $index) {
+    @if (!cell) {
+      <span></span>
+    } @else if (readonly()) {
+      <!-- лише перегляд: день не клікається, точка — є заплановане побачення -->
+      <span
+        class="cal-day static"
+        [class.today]="cell.iso === today"
+        [class.marked]="cell.marks.length"
+        [attr.title]="cell.marks.length ? cell.marks.join(', ') : null"
+      >
+        {{ cell.day }}
+        @if (cell.marks.length) {
+          <span class="dots">
+            @for (m of cell.marks.slice(0, 3); track $index) {
+              <i></i>
+            }
+          </span>
+        }
+      </span>
+    } @else {
+      <button
+        type="button"
+        class="cal-day"
+        [class.selected]="cell.iso === value()"
+        [class.today]="cell.iso === today"
+        [disabled]="cell.disabled"
+        (click)="pick(cell)"
+      >
+        {{ cell.day }}
+      </button>
+    }
+  }
+</div>

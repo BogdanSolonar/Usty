@@ -1,0 +1,49 @@
+<app-modal size="wide" (closed)="closed.emit()">
+  <form class="modal-body" (ngSubmit)="save()">
+    <h2 class="form-heading">💞 Нова пара</h2>
+    <p class="muted intro">
+      Після створення кожен отримає своє посилання на Telegram-бота: натиснувши «Start», людина одразу отримає
+      свій пароль. Паролі також буде видно тут — на випадок, якщо треба передати вручну.
+    </p>
+
+    <div class="partners">
+      @for (p of partners; track p.key) {
+        @let f = form(p.key);
+        <fieldset class="partner" [style.--partner-color]="f.color">
+          <legend>{{ p.title }}</legend>
+
+          <label class="field">
+            <span>Ім'я</span>
+            <input [name]="p.key + '-name'" [(ngModel)]="f.name" [placeholder]="p.namePlaceholder" maxlength="40" required autocomplete="off" />
+          </label>
+
+          <label class="field">
+            <span>Чий? <small class="muted">— для підписів «Вішліст {{ f.nameGenitive || p.genitivePlaceholder }}»</small></span>
+            <input [name]="p.key + '-genitive'" [(ngModel)]="f.nameGenitive" [placeholder]="p.genitivePlaceholder" maxlength="40" autocomplete="off" />
+          </label>
+
+          <div class="row">
+            <label class="field color-field">
+              <span>Колір</span>
+              <input type="color" [name]="p.key + '-color'" [(ngModel)]="f.color" />
+            </label>
+            <label class="field grow">
+              <span>Пароль <small class="muted">(порожньо — згенерується)</small></span>
+              <input [name]="p.key + '-password'" [(ngModel)]="f.password" placeholder="автоматично" maxlength="64" autocomplete="new-password" />
+            </label>
+          </div>
+        </fieldset>
+      }
+    </div>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <div class="actions">
+      <button type="submit" class="btn btn-primary" [disabled]="!canSave()">
+        {{ saving() ? 'Створюю…' : 'Створити пару' }}
+      </button>
+    </div>
+  </form>
+</app-modal>

@@ -1,0 +1,62 @@
+.admin-bg {
+  min-height: calc(100vh - 200px);
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255, 190, 210, 0.5), transparent 35%),
+    radial-gradient(circle at 90% 20%, rgba(200, 190, 255, 0.4), transparent 35%),
+    linear-gradient(180deg, #fff6f8 0%, #f6f0fb 100%);
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 24px 60px;
+}
+
+.section-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  font-family: var(--title-font);
+  font-size: 22px;
+  color: #5c2d3c;
+}
+
+.section-title .count {
+  padding: 2px 10px;
+  border-radius: 99px;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  color: white;
+  background: var(--accent);
+}
+
+.section-title small {
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.intro {
+  margin: -8px 0 18px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.confirm-text {
+  margin: 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 20px 12px 40px;
+  }
+}

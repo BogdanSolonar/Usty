@@ -1,0 +1,93 @@
+<div class="field photo-field">
+  <span>Фото</span>
+
+  <!-- 1. Запропоновані фото за назвою: вибране підсвічується прямо тут -->
+  @switch (searchState()) {
+    @case ('loading') {
+      <div class="suggestion-grid">
+        @for (i of [1, 2, 3]; track i) {
+          <div class="suggestion skeleton"></div>
+        }
+      </div>
+    }
+    @case ('done') {
+      @if (suggestions().length) {
+        <p class="hint">Підходящі фото — оберіть одне:</p>
+        <div class="suggestion-grid" [class.has-choice]="hasSuggestionChoice()">
+          @for (photo of suggestions(); track photo.imageUrl) {
+            <button
+              type="button"
+              class="suggestion"
+              [class.selected]="isSelected(photo)"
+              [attr.aria-pressed]="isSelected(photo)"
+              (click)="pickSuggestion(photo)"
+              [title]="photo.alt + ' — ' + photo.photographer"
+            >
+              <img [src]="photo.previewUrl" [alt]="photo.alt" loading="lazy" />
+              @if (isSelected(photo)) {
+                <span class="check" aria-hidden="true">✓</span>
+              }
+            </button>
+          }
+        </div>
+        <p class="credit">Фото: <a href="https://pixabay.com" target="_blank" rel="noopener">Pixabay</a></p>
+      }
+    }
+    @case ('disabled') {
+      <p class="hint">Автопідбір фото вимкнено: додайте ключ Pixabay у backend/secrets.properties.</p>
+    }
+    @case ('error') {
+      <p class="hint">Не вдалося підібрати фото. Можна додати своє нижче.</p>
+    }
+    @default {
+      @if (!title().trim()) {
+        <p class="hint">Введіть назву — і тут з'являться підходящі фото.</p>
+      }
+    }
+  }
+
+  <!-- 2. Свій файл з пристрою: або зона вибору, або прев'ю обраного файлу -->
+  @if (ownPhoto(); as own) {
+    <div class="own-preview">
+      <img [src]="own.url" [alt]="own.label" />
+      <div class="own-info">
+        <strong>{{ own.label }}</strong>
+        @if (own.name) {
+          <small class="muted">{{ own.name }}</small>
+        }
+        <div class="own-actions">
+          <label class="btn btn-ghost btn-sm">
+            Інший файл
+            <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" (change)="onFileSelected($event)" hidden />
+          </label>
+          <button type="button" class="btn btn-ghost btn-sm" (click)="clear()">Прибрати</button>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <label
+      class="upload"
+      [class.dragging]="dragging()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="dragging.set(false)"
+      (drop)="onDrop($event)"
+    >
+      <span class="upload-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 16V4" />
+          <path d="m6 10 6-6 6 6" />
+          <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+        </svg>
+      </span>
+      <span class="upload-text">
+        <strong>Завантажити файл</strong>
+        <small>або перетягніть фото сюди · до 10 МБ</small>
+      </span>
+      <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" (change)="onFileSelected($event)" hidden />
+    </label>
+  }
+
+  @if (fileError()) {
+    <p class="error">{{ fileError() }}</p>
+  }
+</div>

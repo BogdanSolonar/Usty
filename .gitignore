@@ -1,0 +1,37 @@
+# ===== Секрети — НІКОЛИ не в git =====
+secrets.properties
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+
+# ===== Збірки й залежності =====
+node_modules/
+dist/
+build/
+target/
+out/
+bin/
+.gradle/
+.angular/
+*.class
+
+# ===== Дані (фото, бекапи бази) =====
+backend/uploads/
+data/
+backups/
+usty-export/
+*.dump
+*.sql
+*.sql.gz
+
+# ===== Редактори, ОС, логи =====
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+*.log
+.claude/settings.local.json

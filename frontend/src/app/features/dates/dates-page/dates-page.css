@@ -1,0 +1,73 @@
+/* дві колонки: ідеї + права колонка з календарем і запланованими */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  align-items: start;
+  gap: 32px;
+}
+
+.side {
+  position: sticky;
+  top: 20px;
+}
+
+/* вужчі екрани: права колонка переходить нагору, календар і список — поруч */
+@media (max-width: 1000px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .side {
+    position: static;
+    order: -1;
+  }
+
+  .side app-planned-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+@media (max-width: 680px) {
+  .side app-planned-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 300; /* ховається, щойно відкривається вікно; кліки в будь-якому разі пропускає */
+  max-width: calc(100vw - 32px);
+  padding: 14px 22px;
+  border-radius: 999px;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  background: #2b2230;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  transform: translateX(-50%);
+  animation: toast-in 0.3s ease;
+  /* лише повідомлення: кліки проходять крізь нього до кнопок під ним (напр. у відкритому вікні) */
+  pointer-events: none;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+}
+
+/* поруч із правою колонкою плитки трохи вужчі за історію, щоб влазило 3 в ряд */
+.ideas .cards {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+@media (max-width: 600px) {
+  .ideas .cards {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}

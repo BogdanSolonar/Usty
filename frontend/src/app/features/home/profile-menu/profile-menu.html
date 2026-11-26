@@ -1,0 +1,32 @@
+@if (user(); as me) {
+  <button class="chip" type="button" (click)="open.set(!open())" [attr.aria-expanded]="open()">
+    <app-user-avatar [user]="me" [size]="40" />
+    <span class="chip-name">{{ me.name }}</span>
+  </button>
+
+  @if (open()) {
+    <div class="menu" role="menu">
+      <div class="menu-avatar" [class.loading]="uploading()">
+        <app-user-avatar [user]="me" [size]="96" />
+      </div>
+      <strong>{{ me.name }}</strong>
+
+      <label class="btn btn-ghost menu-btn">
+        {{ uploading() ? 'Завантажую…' : '📷 Змінити фото' }}
+        <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" (change)="onFileSelected($event)" hidden />
+      </label>
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      <!-- лише для адміна (бекенд однаково перевіряє доступ до /api/admin) -->
+      @if (isAdmin()) {
+        <hr />
+        <a class="btn btn-primary menu-btn" routerLink="/admin" [queryParams]="{ new: 1 }">💞 Створити нову пару</a>
+        <a class="btn btn-ghost menu-btn" routerLink="/admin">👥 Керування парами</a>
+        <hr />
+      }
+      <button class="btn btn-ghost menu-btn danger-text" type="button" (click)="logout()">Вийти</button>
+    </div>
+  }
+}

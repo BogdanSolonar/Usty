@@ -1,0 +1,261 @@
+.stats {
+  padding: 26px 28px 30px;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(255, 205, 160, 0.25), transparent 40%),
+    radial-gradient(circle at 90% 10%, rgba(236, 72, 153, 0.1), transparent 40%),
+    white;
+}
+
+h2 {
+  margin: 0;
+  padding-right: 40px;
+  font-size: 28px;
+}
+
+.subtitle {
+  margin: 4px 0 20px;
+}
+
+/* ===== Профілі пари ===== */
+.profiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 22px 16px 18px;
+  border-radius: 20px;
+  background: #fbf7f9;
+  border: 1px solid #f1e5eb;
+  text-align: center;
+  transition: box-shadow 0.3s;
+}
+
+/* попереду — лише м'яка тепла підсвітка, без гучних титулів */
+.profile.ahead {
+  background: linear-gradient(180deg, #fffaf0, #fff5e1);
+  border-color: #f8dfa6;
+  box-shadow: 0 8px 26px rgba(245, 183, 46, 0.18);
+}
+
+.avatar-wrap {
+  position: relative;
+  display: inline-grid;
+  margin-bottom: 4px;
+}
+
+.profile.ahead .avatar-wrap app-user-avatar {
+  box-shadow: 0 0 0 3px white, 0 0 0 5px #f5c542, 0 6px 18px rgba(245, 183, 46, 0.35);
+}
+
+.medal {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 20px;
+  background: white;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+}
+
+.name {
+  font-size: 18px;
+}
+
+.total {
+  font-family: var(--title-font);
+  font-size: 26px;
+  font-weight: 700;
+  color: #5c2d3c;
+}
+
+/* ===== Тепла підказка ===== */
+.tip {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: white;
+  border: 1px dashed #f0c7d6;
+  text-align: left;
+  animation: tip-in 0.4s ease both;
+}
+
+.tip.tie,
+.tip.start,
+.tip.lead {
+  border-color: #cfe3f8;
+  background: #f6faff;
+}
+
+.tip p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.tip .headline {
+  font-weight: 600;
+  color: #4a3340;
+}
+
+.tip .action {
+  margin-top: 6px;
+  color: #6b5a63;
+}
+
+/* ===== Бали за активності ===== */
+.categories {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.category {
+  padding: 14px 14px 12px;
+  border-radius: 16px;
+  background: #fbf7f9;
+  border: 1px solid #f1e5eb;
+}
+
+.category header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.cat-icon {
+  font-size: 26px;
+}
+
+.category h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.category header p {
+  margin: 2px 0 0;
+  font-size: 12px;
+}
+
+.category ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.category li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: white;
+  font-size: 13px;
+}
+
+.category li.ahead {
+  background: #fff7e3;
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+  color: #6b5a63;
+}
+
+.pts {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mini-medal {
+  font-size: 14px;
+}
+
+@media (max-width: 720px) {
+  .categories {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .stats {
+    padding: 22px 14px;
+  }
+
+  /* телефон: профілі один під одним — аватарка ліворуч, бали праворуч, підказка на всю ширину */
+  .profiles {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .profile {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'avatar name'
+      'avatar total'
+      'tip tip';
+    align-items: center;
+    column-gap: 14px;
+    row-gap: 0;
+    padding: 14px;
+    text-align: left;
+  }
+
+  .avatar-wrap {
+    grid-area: avatar;
+    margin: 0;
+  }
+
+  .avatar-wrap app-user-avatar {
+    --size: 64px !important;
+  }
+
+  .name {
+    grid-area: name;
+    align-self: end;
+  }
+
+  .total {
+    grid-area: total;
+    align-self: start;
+    font-size: 22px;
+  }
+
+  .tip {
+    grid-area: tip;
+    margin-top: 12px;
+  }
+
+  .medal {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+}
+
+@keyframes tip-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}

@@ -1,0 +1,95 @@
+<app-page-hero [category]="info">
+  <button class="btn btn-primary" type="button" (click)="openCreate()"><span class="ico" aria-hidden="true">＋</span> Моє бажання</button>
+</app-page-hero>
+
+<main class="collection-bg" style="--tint-1: rgba(255, 205, 150, 0.45)">
+  <div class="page">
+    <div class="tabs" role="tablist">
+      @for (u of users(); track u.id) {
+        <button
+          class="tab"
+          type="button"
+          role="tab"
+          [class.active]="tab() === u.id"
+          [attr.aria-selected]="tab() === u.id"
+          [style.--tab-color]="u.color"
+          (click)="tab.set(u.id)"
+        >
+          <app-user-avatar [user]="u" [size]="30" />
+          Вішліст {{ whose(u) }}
+        </button>
+      }
+    </div>
+    @if (!isMine()) {
+      <p class="hint-bar">Тут видно, що хоче {{ tabUser()?.name }} 🎁 Свої бажання додавайте кнопкою «Моє бажання».</p>
+    }
+
+    @if (loadError()) {
+      <p class="error">Не вдалося завантажити вішліст. Перевірте, що бекенд запущено.</p>
+    } @else if (loaded() && items().length === 0) {
+      <div class="empty-state">
+        <div class="empty-emoji">🎁</div>
+        <p>{{ isMine() ? 'Ваш вішліст поки порожній' : 'Тут поки порожньо' }}</p>
+        @if (isMine()) {
+          <button class="btn btn-primary" (click)="openCreate()">Додати перше бажання</button>
+        }
+      </div>
+    }
+
+    <div class="tiles">
+      @for (item of items(); track item.id; let i = $index) {
+        <app-entry-tile
+          [title]="item.title"
+          [imageUrl]="item.imageUrl"
+          emoji="🎁"
+          [index]="i"
+          [done]="item.fulfilled"
+          (open)="openDetails(item)"
+        >
+          @if (item.fulfilled) {
+            <span tileBadge class="badge">🎁 Подаровано</span>
+          }
+        </app-entry-tile>
+      }
+    </div>
+  </div>
+</main>
+
+@if (modal() === 'details' && selected(); as item) {
+  <app-entry-details
+    [title]="item.title"
+    [imageUrl]="item.imageUrl"
+    emoji="🎁"
+    [createdAt]="item.createdAt"
+    [description]="item.description"
+    [canEdit]="isOwner(item)"
+    [deleteFn]="deleteFn"
+    (closed)="close()"
+    (edit)="modal.set('form')"
+    (deleted)="onDeleted()"
+  >
+    <div detailsMeta>
+      <span class="owner-line">
+        <app-user-avatar [user]="item.owner" [size]="26" />
+        Бажання {{ whose(item.owner) }}
+      </span>
+      @if (item.fulfilled) {
+        <p class="done-line">🎁 Подаровано</p>
+      }
+    </div>
+    <button detailsActions class="btn" type="button" [class.btn-success]="!item.fulfilled" [class.btn-ghost]="item.fulfilled" (click)="toggleFulfilled(item)">
+      {{ item.fulfilled ? 'Повернути в бажання' : '🎁 Подаровано!' }}
+    </button>
+  </app-entry-details>
+}
+
+@if (modal() === 'form') {
+  <app-entry-form
+    [heading]="selected() ? 'Редагування' : 'Нове бажання'"
+    placeholder="Наприклад: книжка, парфуми, квіти"
+    [initial]="selected() ? { title: selected()!.title, description: selected()!.description, imageUrl: selected()!.imageUrl } : null"
+    [saveFn]="saveFn"
+    (closed)="close()"
+    (saved)="onSaved($event)"
+  />
+}

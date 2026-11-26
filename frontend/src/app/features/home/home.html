@@ -1,0 +1,37 @@
+<div class="home">
+  <div class="home-backdrop" aria-hidden="true">
+    @for (cat of categories; track cat.slug) {
+      <div class="home-backdrop-part" [style.background-image]="'url(' + cat.image + ')'"></div>
+    }
+  </div>
+
+  <!-- Шапка пари: я (клік — меню профілю) ♥ моя половинка -->
+  <div class="couple-bar">
+    <app-profile-menu />
+    @if (partner(); as p) {
+      <span class="heart" aria-hidden="true">♥</span>
+      <div class="partner" [title]="p.name">
+        <app-user-avatar [user]="p" [size]="40" />
+        <span class="partner-name">{{ p.name }}</span>
+      </div>
+    }
+  </div>
+
+  <nav class="panels" aria-label="Категорії">
+    @for (cat of categories; track cat.slug) {
+      <!-- view-transition-name: браузер "перетягне" цю панель у шапку сторінки категорії -->
+      <a
+        class="panel"
+        [routerLink]="['/c', cat.slug]"
+        [style.background-image]="'url(' + cat.image + ')'"
+        [style.background-position]="cat.focus"
+        [style.view-transition-name]="'hero-' + cat.slug"
+      >
+        <div class="panel-content">
+          <h2>{{ cat.title }}</h2>
+          <p>{{ cat.subtitle }}</p>
+        </div>
+      </a>
+    }
+  </nav>
+</div>

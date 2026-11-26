@@ -1,0 +1,32 @@
+<app-calendar [readonly]="true" [marks]="marks()" />
+
+<section class="planned">
+  <h2 class="section-title">📅 Заплановані <span class="count">{{ dates().length }}</span></h2>
+
+  @if (dates().length) {
+    <ul>
+      @for (d of dates(); track d.id) {
+        <li>
+          <button type="button" class="item" (click)="open.emit(d)">
+            <span class="day">
+              <strong>{{ d.plannedDate | date: 'd' }}</strong>
+              <small>{{ d.plannedDate | date: 'MMM' }}</small>
+            </span>
+            <span class="info">
+              <span class="title">{{ d.title }}</span>
+              <span class="when">{{ d.plannedDate | date: 'EEEE' }}</span>
+              @if (d.initiatedBy; as who) {
+                <span class="who">
+                  <app-user-avatar [user]="who" [size]="22" />
+                  {{ who.name }} {{ plannedVerb(who) }}
+                </span>
+              }
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="hint">Наведіть на ідею й натисніть «✨ Реалізувати» — вона з'явиться тут.</p>
+  }
+</section>

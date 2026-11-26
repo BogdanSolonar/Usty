@@ -1,0 +1,200 @@
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.person {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.person.small {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.state {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+}
+
+.state-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.state.planned {
+  background: #fff4dc;
+}
+
+.state.completed {
+  flex-direction: column;
+  gap: 0;
+  background: #e7f8ec;
+}
+
+.state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.note {
+  margin: 8px 0 0;
+  white-space: pre-wrap;
+}
+
+h3 {
+  margin: 22px 0 10px;
+  font-size: 17px;
+}
+
+
+
+/* галерея фото з побачення */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.gallery-item {
+  position: relative;
+  aspect-ratio: 1;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: zoom-in;
+  background: #eee;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.06);
+}
+
+.gallery-item .score {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+}
+
+.gallery-item .uploader {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+}
+
+/* фото на весь екран */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(10, 6, 14, 0.85);
+  animation: fade 0.2s ease;
+}
+
+.lightbox-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 900px);
+  max-height: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  background: white;
+}
+
+.lightbox-inner img {
+  min-height: 0;
+  max-height: 62vh;
+  object-fit: contain;
+  background: #111;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+
+.lightbox-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px 18px;
+  overflow-y: auto;
+}
+
+.lightbox-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lightbox-head > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.bars {
+  display: grid;
+  grid-template-columns: auto 1fr 32px;
+  align-items: center;
+  gap: 6px 12px;
+  font-size: 13px;
+}
+
+.bar {
+  height: 8px;
+  border-radius: 99px;
+  background: #f1e6eb;
+  overflow: hidden;
+}
+
+.bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #f59eb8, var(--accent));
+}
+
+.bar-value {
+  text-align: right;
+  font-weight: 700;
+}
+
+.lightbox-info .btn {
+  align-self: flex-start;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}

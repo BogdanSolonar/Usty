@@ -1,0 +1,65 @@
+# Сервер (VPS): база + бекенд + вебсервер із HTTPS.
+#   docker compose -f docker-compose.prod.yml up -d --build
+# Усі секрети — у файлі .env поруч (шаблон: .env.example). Назовні відкриті лише порти 80/443.
+name: usty
+
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: planning
+      POSTGRES_USER: planning
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Задайте POSTGRES_PASSWORD у .env}
+    volumes:
+      - db-data:/var/lib/postgresql/data   # база не зникає після перезапуску/оновлення контейнерів
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U planning -d planning"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/planning
+      DB_USER: planning
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      UPLOADS_DIR: /app/uploads
+      JWT_SECRET: ${JWT_SECRET:?Задайте JWT_SECRET у .env (openssl rand -base64 48)}
+      USERS_BODYA_PASSWORD: ${USERS_BODYA_PASSWORD:-}
+      USERS_MARICHKA_PASSWORD: ${USERS_MARICHKA_PASSWORD:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME:-UstyBM_bot}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+      PIXABAY_API_KEY: ${PIXABAY_API_KEY:-}
+      # справжня IP-адреса користувача з заголовка X-Forwarded-For від Caddy (для обмеження спроб входу)
+      SERVER_FORWARD_HEADERS_STRATEGY: native
+      JAVA_TOOL_OPTIONS: -Xmx768m
+    volumes:
+      - ./data/uploads:/app/uploads          # аватарки, обкладинки, фото з побачень — звичайна папка на сервері
+
+  web:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data                     # HTTPS-сертифікати
+      - caddy-config:/config
+
+volumes:
+  db-data:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,10 @@
+# Не копіюємо в Docker-образ: збірки, локальні фото і, головне, секрети
+build/
+.gradle/
+bin/
+out/
+uploads/
+secrets.properties
+*.iml
+.idea/
+.vscode/

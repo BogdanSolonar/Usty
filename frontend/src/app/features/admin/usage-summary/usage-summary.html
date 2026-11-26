@@ -1,0 +1,17 @@
+@let o = overview();
+<section class="summary" aria-label="Статистика використання">
+  <div class="tile main">
+    <span class="value">{{ o.couples }}</span>
+    <span class="label">пар у системі</span>
+    <small>{{ o.activeCouples }} — обоє вже входили</small>
+  </div>
+  <div class="tile main">
+    <span class="value">{{ o.loggedInUsers }}<small>/{{ o.users }}</small></span>
+    <span class="label">користувачів входили</span>
+    <small>{{ o.telegramUsers }} прив’язали Telegram-бота</small>
+  </div>
+  <div class="tile"><span class="value">{{ o.dates }}</span><span class="label">🌹 побачень</span></div>
+  <div class="tile"><span class="value">{{ o.wishes }}</span><span class="label">🎁 бажань</span></div>
+  <div class="tile"><span class="value">{{ o.dreams }}</span><span class="label">✨ мрій</span></div>
+  <div class="tile"><span class="value">{{ o.photos }}</span><span class="label">📸 фото</span></div>
+</section>

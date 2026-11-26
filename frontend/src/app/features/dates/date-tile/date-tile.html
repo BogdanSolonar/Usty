@@ -1,0 +1,43 @@
+@let d = date();
+<article
+  class="card"
+  [class.planned]="d.status === 'PLANNED'"
+  tabindex="0"
+  role="button"
+  (click)="open.emit()"
+  (keydown.enter)="open.emit()"
+>
+  <div class="photo">
+    @if (cover()) {
+      <img [src]="cover()" [alt]="d.title" loading="lazy" />
+    } @else {
+      <div class="placeholder">🌹</div>
+    }
+
+    @if (d.status === 'PLANNED') {
+      <span class="ribbon">📅 {{ d.plannedDate | date: 'd MMMM' }}</span>
+    }
+    @if (d.status === 'COMPLETED') {
+      <span class="ribbon done">📸 {{ d.photos.length }}</span>
+    }
+
+    @if (d.status === 'IDEA') {
+      <!-- кнопка всередині картки: зупиняємо клік, щоб не відкривались ще й деталі -->
+      <div class="hover-actions">
+        <button class="btn btn-primary realize" type="button" (click)="$event.stopPropagation(); realize.emit()">
+          ✨ Реалізувати
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="caption">
+    <h3>{{ d.title }}</h3>
+    @if (d.status === 'COMPLETED' && d.completedAt) {
+      <p>{{ d.completedAt | date: 'd MMMM y' }}</p>
+    }
+  </div>
+
+  <!-- автор ідеї: аватарка (або літера М / Б, якщо фото ще немає) -->
+  <app-user-avatar class="author" [user]="d.createdBy" [size]="34" />
+</article>

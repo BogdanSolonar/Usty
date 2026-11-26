@@ -1,0 +1,65 @@
+/* Спільне оформлення сторінок "Побачення" та "Історія":
+   теплий фон з м'якими плямами світла і ледь помітними сердечками замість простого білого */
+.dates-bg {
+  position: relative;
+  min-height: calc(100vh - 260px);
+  background:
+    radial-gradient(circle at 8% 12%, rgba(255, 183, 197, 0.55), transparent 32%),
+    radial-gradient(circle at 92% 8%, rgba(255, 214, 165, 0.55), transparent 30%),
+    radial-gradient(circle at 75% 85%, rgba(214, 178, 255, 0.35), transparent 35%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32 44s-10-6.4-10-13a5.6 5.6 0 0 1 10-3.4A5.6 5.6 0 0 1 42 31c0 6.6-10 13-10 13z' fill='%23d6336c' fill-opacity='0.05'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #fff6f3 0%, #fdeef2 55%, #f6eefb 100%);
+}
+
+.page {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 30px 24px 60px;
+}
+
+/* сітка карток: стільки колонок, скільки влізе */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  font-family: var(--title-font);
+  font-size: 22px;
+  color: #5c2d3c;
+}
+
+.section-title .count {
+  padding: 2px 10px;
+  border-radius: 99px;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  color: white;
+  background: var(--accent);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px 0;
+  color: var(--muted);
+}
+
+.empty-emoji {
+  font-size: 56px;
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 20px 14px 40px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+  }
+}

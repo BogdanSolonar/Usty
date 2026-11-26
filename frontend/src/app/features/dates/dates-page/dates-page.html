@@ -1,0 +1,71 @@
+<app-page-hero [category]="info">
+  <a class="btn btn-glass" routerLink="/c/dates/history"><span class="ico" aria-hidden="true">🕓</span> Історія</a>
+  <button class="btn btn-glass" type="button" (click)="open('stats')"><span class="ico" aria-hidden="true">✨</span> Статистика</button>
+  <button class="btn btn-primary" type="button" (click)="open('form')"><span class="ico" aria-hidden="true">＋</span> Створити</button>
+</app-page-hero>
+
+<main class="dates-bg">
+  <div class="page">
+    @if (loadError()) {
+      <p class="error">Не вдалося завантажити список. Перевірте, що бекенд запущено.</p>
+    } @else {
+      <div class="layout">
+        <!-- Ліворуч: ідеї плитками -->
+        <section class="ideas">
+          <h2 class="section-title">💡 Ідеї <span class="count">{{ ideas().length }}</span></h2>
+          @if (ideas().length) {
+            <div class="cards">
+              @for (d of ideas(); track d.id; let i = $index) {
+                <app-date-tile [date]="d" [index]="i" (open)="open('details', d)" (realize)="open('plan', d)" />
+              }
+            </div>
+          } @else if (loaded()) {
+            <div class="empty-state">
+              <div class="empty-emoji">🌹</div>
+              <p>{{ planned().length ? 'Усі ідеї вже заплановані — час придумати нові' : 'Ідей побачень поки немає' }}</p>
+              <button class="btn btn-primary" (click)="open('form')">Додати ідею</button>
+            </div>
+          }
+        </section>
+
+        <!-- Праворуч: календарик + заплановані -->
+        <aside class="side">
+          <app-planned-panel [dates]="planned()" (open)="open('details', $event)" />
+        </aside>
+      </div>
+    }
+  </div>
+</main>
+
+@switch (modal()) {
+  @case ('details') {
+    <app-date-details
+      [date]="selected()!"
+      (closed)="closeModal()"
+      (edit)="openFromDetails('form')"
+      (replan)="openFromDetails('plan')"
+      (changed)="onChanged($event)"
+      (completed)="onCompleted($event)"
+      (deleted)="onDeleted($event)"
+    />
+  }
+  @case ('form') {
+    <app-entry-form
+      [heading]="selected() ? 'Редагування' : 'Нова ідея побачення'"
+      [initial]="selected() ? { title: selected()!.title, description: selected()!.description, imageUrl: selected()!.coverImageUrl } : null"
+      [saveFn]="saveFn"
+      (closed)="closeModal()"
+      (saved)="onSaved($event)"
+    />
+  }
+  @case ('plan') {
+    <app-plan-dialog [date]="selected()!" (closed)="closeModal()" (planned)="onPlanned($event)" />
+  }
+  @case ('stats') {
+    <app-stats-dialog (closed)="closeModal()" />
+  }
+}
+
+@if (toast()) {
+  <div class="toast" role="status">{{ toast() }}</div>
+}

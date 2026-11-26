@@ -1,0 +1,38 @@
+<app-modal (closed)="closed.emit()">
+  <form class="modal-body" (ngSubmit)="save()">
+    <h2 class="form-heading">{{ heading() }}</h2>
+
+    <!-- 1. Назва -->
+    <label class="field">
+      <span>Назва</span>
+      <input
+        name="title"
+        [ngModel]="title()"
+        (ngModelChange)="title.set($event)"
+        [placeholder]="placeholder()"
+        maxlength="255"
+        autocomplete="off"
+        required
+      />
+    </label>
+
+    <!-- 2. Фото: пропозиції за назвою або свій файл -->
+    <app-photo-picker [title]="title()" [(choice)]="photo" />
+
+    <!-- 3. Опис -->
+    <label class="field">
+      <span>Опис</span>
+      <textarea name="description" [(ngModel)]="description" rows="4" placeholder="Деталі, нотатки, посилання…"></textarea>
+    </label>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <div class="actions">
+      <button type="submit" class="btn btn-primary" [disabled]="!canSave()">
+        {{ saving() ? 'Зберігаю…' : 'Зберегти' }}
+      </button>
+    </div>
+  </form>
+</app-modal>

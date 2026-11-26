@@ -1,0 +1,16 @@
+<!-- view-transition-name: браузер "перетягує" панель з головної саме в цю шапку -->
+<header class="hero" [style.view-transition-name]="morph() ? 'hero-' + category().slug : null">
+  <!-- фото окремим шаром: його можна розмити, не розмиваючи текст і кнопки -->
+  <div
+    class="hero-bg"
+    aria-hidden="true"
+    [style.background-image]="'url(' + category().image + ')'"
+    [style.background-position]="category().focus"
+  ></div>
+
+  <a class="btn btn-glass hero-back" [routerLink]="backLink()">← {{ backLabel() }}</a>
+  <h1 class="hero-title">{{ title() ?? category().title }}</h1>
+  <div class="hero-actions">
+    <ng-content />
+  </div>
+</header>

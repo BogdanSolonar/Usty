@@ -1,0 +1,93 @@
+<app-page-hero [category]="info">
+  <button class="btn btn-primary" type="button" (click)="openCreate()"><span class="ico" aria-hidden="true">＋</span> Моя мрія</button>
+</app-page-hero>
+
+<main class="collection-bg" style="--tint-1: rgba(160, 190, 255, 0.45); --tint-2: rgba(255, 200, 230, 0.4)">
+  <div class="page">
+    <div class="tabs" role="tablist">
+      <button class="tab text-only" type="button" role="tab" [class.active]="filter() === null" (click)="filter.set(null)">
+        ✨ Усі
+      </button>
+      @for (u of users(); track u.id) {
+        <button
+          class="tab"
+          type="button"
+          role="tab"
+          [class.active]="filter() === u.id"
+          [style.--tab-color]="u.color"
+          (click)="filter.set(u.id)"
+        >
+          <app-user-avatar [user]="u" [size]="30" />
+          Мрії {{ whose(u) }}
+        </button>
+      }
+    </div>
+
+    @if (loadError()) {
+      <p class="error">Не вдалося завантажити мрії. Перевірте, що бекенд запущено.</p>
+    } @else if (loaded() && dreams().length === 0) {
+      <div class="empty-state">
+        <div class="empty-emoji">✨</div>
+        <p>Мрій тут поки немає</p>
+        <button class="btn btn-primary" (click)="openCreate()">Додати мрію</button>
+      </div>
+    }
+
+    <div class="tiles">
+      @for (dream of dreams(); track dream.id; let i = $index) {
+        <app-entry-tile
+          [title]="dream.title"
+          [imageUrl]="dream.imageUrl"
+          emoji="✨"
+          [index]="i"
+          [done]="dream.achieved"
+          (open)="openDetails(dream)"
+        >
+          <app-user-avatar tileCorner [user]="dream.createdBy" [size]="32" />
+          @if (dream.achieved) {
+            <span tileBadge class="badge">✨ Здійснилось</span>
+          }
+        </app-entry-tile>
+      }
+    </div>
+  </div>
+</main>
+
+@if (modal() === 'details' && selected(); as dream) {
+  <app-entry-details
+    [title]="dream.title"
+    [imageUrl]="dream.imageUrl"
+    emoji="✨"
+    [createdAt]="dream.createdAt"
+    [description]="dream.description"
+    [canEdit]="isAuthor(dream)"
+    [deleteFn]="deleteFn"
+    (closed)="close()"
+    (edit)="modal.set('form')"
+    (deleted)="onDeleted()"
+  >
+    <div detailsMeta>
+      <span class="owner-line">
+        <app-user-avatar [user]="dream.createdBy" [size]="26" />
+        Мрія {{ whose(dream.createdBy) }}
+      </span>
+      @if (dream.achieved) {
+        <p class="done-line">✨ Здійснилась!</p>
+      }
+    </div>
+    <button detailsActions class="btn" type="button" [class.btn-success]="!dream.achieved" [class.btn-ghost]="dream.achieved" (click)="toggleAchieved(dream)">
+      {{ dream.achieved ? 'Ще не здійснилась' : '✨ Здійснилась!' }}
+    </button>
+  </app-entry-details>
+}
+
+@if (modal() === 'form') {
+  <app-entry-form
+    [heading]="selected() ? 'Редагування' : 'Нова мрія'"
+    placeholder="Наприклад: подорож до Японії"
+    [initial]="selected() ? { title: selected()!.title, description: selected()!.description, imageUrl: selected()!.imageUrl } : null"
+    [saveFn]="saveFn"
+    (closed)="close()"
+    (saved)="onSaved($event)"
+  />
+}

@@ -1,0 +1,48 @@
+<app-modal [size]="wide() ? 'wide' : 'normal'" (closed)="closed.emit()">
+  @if (imageUrl()) {
+    <img class="details-photo" [src]="imageUrl()" [alt]="title()" />
+  } @else {
+    <div class="details-photo placeholder">{{ emoji() }}</div>
+  }
+
+  <div class="modal-body">
+    <h2>{{ title() }}</h2>
+    <p class="details-date">Додано {{ createdAt() | date: "d MMMM y 'о' HH:mm" }}</p>
+    <ng-content select="[detailsMeta]" />
+
+    @if (descriptionParts().length) {
+      <!-- записано в один рядок: опис показується з white-space: pre-wrap,
+           тож будь-які відступи в шаблоні стали б видимими пробілами -->
+      <p class="details-description">@for (part of descriptionParts(); track $index) {@if (part.isLink) {<a [href]="part.text" target="_blank" rel="noopener">{{ part.text }}</a>} @else {<span>{{ part.text }}</span>}}</p>
+    }
+
+    <ng-content />
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    @if (confirmingDelete()) {
+      <div class="confirm-box">
+        <p>Точно видалити «{{ title() }}»? Це не можна скасувати.</p>
+        <div class="actions">
+          <button class="btn btn-ghost" (click)="confirmingDelete.set(false)" [disabled]="deleting()">Скасувати</button>
+          <button class="btn btn-danger" (click)="delete()" [disabled]="deleting()">
+            {{ deleting() ? 'Видаляю…' : 'Так, видалити' }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <div class="actions">
+        @if (canEdit()) {
+          <button class="btn btn-ghost danger-text" (click)="confirmingDelete.set(true)">Видалити</button>
+        }
+        <span class="spacer"></span>
+        <ng-content select="[detailsActions]" />
+        @if (canEdit()) {
+          <button class="btn btn-primary" (click)="edit.emit()">Редагувати</button>
+        }
+      </div>
+    }
+  </div>
+</app-modal>

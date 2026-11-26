@@ -1,0 +1,29 @@
+<app-modal (closed)="close()">
+  <div class="modal-body">
+    <h2 class="form-heading">✓ Реалізовано</h2>
+    <p class="muted subtitle">«{{ date().title }}»</p>
+
+    <section class="step">
+      <h3><span class="num">1</span> Коли це було?</h3>
+      <app-calendar [(value)]="day" [max]="today" />
+      @if (day(); as d) {
+        <p class="chosen">Дата: <strong>{{ d | date: 'EEEE, d MMMM y' }}</strong></p>
+      }
+    </section>
+
+    <section class="step">
+      <h3><span class="num">2</span> Фото з побачення <small class="muted">(можна додати й пізніше)</small></h3>
+      <app-photo-uploader />
+    </section>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <div class="actions">
+      <button class="btn btn-success" type="button" [disabled]="!day() || saving()" (click)="save()">
+        {{ saving() ? 'Зберігаю…' : '✓ Зберегти й перенести в Історію' }}
+      </button>
+    </div>
+  </div>
+</app-modal>

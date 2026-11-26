@@ -1,0 +1,91 @@
+:host {
+  --gap: 20px;
+}
+
+/* кожне наступне вікно — вище за попереднє */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: calc(100 + var(--layer, 0) * 10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gap);
+  background: rgba(29, 22, 32, 0.6);
+  backdrop-filter: blur(4px);
+  animation: fade-in 0.2s ease;
+}
+
+/* картка не вища за екран: прокручується вміст, а не вся картка */
+.modal-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 560px;
+  max-height: calc(100dvh - 2 * var(--gap));
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--card);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+  animation: pop-in 0.25s ease;
+}
+
+.modal-card.narrow {
+  max-width: 460px;
+}
+
+.modal-card.wide {
+  max-width: 860px;
+}
+
+.modal-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: white;
+}
+
+@media (max-width: 500px) {
+  :host {
+    --gap: 10px;
+  }
+
+  .modal-card {
+    border-radius: 18px;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+}

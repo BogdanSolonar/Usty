@@ -1,0 +1,119 @@
+@let c = couple();
+<article class="couple" [class.created]="justCreated()">
+  <header>
+    <div class="faces">
+      @for (m of c.members; track m.id; let first = $first) {
+        @if (!first) {
+          <span class="heart">♥</span>
+        }
+        <app-user-avatar [user]="asUser(m)" [size]="44" />
+      }
+    </div>
+    <div class="title">
+      <strong>
+        @for (m of c.members; track m.id; let first = $first) {
+          @if (!first) {
+            <span class="amp"> і </span>
+          }
+          {{ m.name }}
+        }
+      </strong>
+      <small class="muted">Пара #{{ c.id }} · створена {{ c.createdAt | date: 'd MMMM y' }}</small>
+    </div>
+    @if (!justCreated()) {
+      @if (c.deletable) {
+        <button class="btn btn-ghost btn-sm danger-text" type="button" (click)="remove.emit()">Видалити пару</button>
+      } @else {
+        <span class="pill admin-pill">👑 Ваша пара</span>
+      }
+    }
+  </header>
+
+  <div class="members">
+    @for (m of c.members; track m.id) {
+      <section class="member" [style.--member-color]="m.color">
+        <div class="member-head">
+          <span class="role">{{ m.role === 'HE' ? '👨 Хлопець' : '👩 Дівчина' }}</span>
+          <strong>{{ m.name }}</strong>
+          @if (m.nameGenitive !== m.name) {
+            <small class="muted">(чий? — {{ m.nameGenitive }})</small>
+          }
+        </div>
+
+        <div class="statuses">
+          <span class="pill" [class.ok]="m.everLoggedIn">
+            {{ m.everLoggedIn ? '✅ ' + (m.role === 'SHE' ? 'Заходила' : 'Заходив') : '💤 Ще не ' + (m.role === 'SHE' ? 'входила' : 'входив') }}
+          </span>
+          <span class="pill" [class.ok]="m.telegramLinked">
+            {{ m.telegramLinked ? '✅ Telegram прив’язано' : '⏳ Telegram не прив’язано' }}
+          </span>
+          <span class="pill" [class.ok]="!m.pendingPassword">
+            {{ m.pendingPassword ? '🔑 Пароль ще не отримано' : '✅ Пароль отримано' }}
+          </span>
+        </div>
+
+        <!-- активність: коли востаннє "оживав(ла)" і скільки чого створив(ла) -->
+        <dl class="activity">
+          <dt>Остання активність</dt>
+          <dd>
+            @if (m.lastActivityAt) {
+              {{ m.lastActivityAt | date: 'd MMM y, HH:mm' }} <small class="muted">· {{ ago(m.lastActivityAt) }}</small>
+            } @else {
+              <span class="muted">—</span>
+            }
+          </dd>
+          <dt>Останній вхід</dt>
+          <dd>
+            @if (m.lastLoginAt) {
+              {{ m.lastLoginAt | date: 'd MMM y, HH:mm' }}
+            } @else {
+              <span class="muted">—</span>
+            }
+          </dd>
+        </dl>
+        <ul class="counts" aria-label="Створено">
+          <li title="Побачень"><span>🌹</span><strong>{{ m.created.dates }}</strong> побач.</li>
+          <li title="Бажань"><span>🎁</span><strong>{{ m.created.wishes }}</strong> бажань</li>
+          <li title="Мрій"><span>✨</span><strong>{{ m.created.dreams }}</strong> мрій</li>
+          <li title="Фото"><span>📸</span><strong>{{ m.created.photos }}</strong> фото</li>
+        </ul>
+
+        @if (m.pendingPassword; as password) {
+          <div class="secret">
+            <span class="label">Пароль</span>
+            <code class="value">{{ isRevealed(m) ? password : '•••• •••• ••••' }}</code>
+            @if (!justCreated()) {
+              <button class="icon-btn" type="button" (click)="toggleReveal(m)" [attr.aria-label]="isRevealed(m) ? 'Сховати' : 'Показати'">
+                {{ isRevealed(m) ? '🙈' : '👁' }}
+              </button>
+            }
+            <button class="icon-btn" type="button" (click)="copy(password, 'p' + m.id)" aria-label="Копіювати пароль">
+              {{ copied() === 'p' + m.id ? '✓' : '📋' }}
+            </button>
+          </div>
+        }
+
+        @if (m.inviteLink; as link) {
+          <div class="secret">
+            <span class="label">Бот</span>
+            <a class="value link" [href]="link" target="_blank" rel="noopener">{{ link }}</a>
+            <button class="icon-btn" type="button" (click)="copy(link, 'l' + m.id)" aria-label="Копіювати посилання">
+              {{ copied() === 'l' + m.id ? '✓' : '📋' }}
+            </button>
+          </div>
+        } @else if (m.pendingPassword && !c.botConfigured) {
+          <p class="note">Telegram-бот не налаштований — передайте пароль вручну.</p>
+        }
+
+        <div class="member-actions">
+          @if (!m.telegramLinked && !m.inviteLink && c.botConfigured) {
+            <button class="btn btn-ghost btn-sm" type="button" (click)="invite.emit(m)">🔗 Посилання для Telegram</button>
+          }
+          @if (!m.admin) {
+            <button class="btn btn-ghost btn-sm" type="button" (click)="reset.emit(m)">🔄 Новий пароль і посилання</button>
+          }
+        </div>
+      </section>
+    }
+  </div>
+</article>

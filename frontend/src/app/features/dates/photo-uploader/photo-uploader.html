@@ -1,0 +1,74 @@
+<div class="uploader" [class.has-items]="items().length">
+  <!-- зона вибору: клік або перетягування файлів -->
+  <label
+    class="drop"
+    [class.disabled]="busy()"
+    [class.dragging]="dragging()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="dragging.set(false)"
+    (drop)="onDrop($event)"
+  >
+    <span class="drop-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 16V4" />
+        <path d="m6 10 6-6 6 6" />
+        <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+      </svg>
+    </span>
+    <span class="drop-text">
+      <strong>{{ dragging() ? 'Відпустіть, щоб додати' : 'Перетягніть фото сюди' }}</strong>
+      <small>JPG, PNG, WebP · до 10 МБ · можна кілька одразу</small>
+    </span>
+    <span class="btn btn-primary btn-sm pick">📷 Обрати фото</span>
+    <input
+      type="file"
+      accept="image/jpeg,image/png,image/webp,image/gif"
+      multiple
+      hidden
+      [disabled]="busy()"
+      (change)="onFilesSelected($event)"
+    />
+  </label>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (items().length) {
+    <div class="previews-head">
+      <span>Обрано: <strong>{{ items().length }}</strong></span>
+      <small class="muted">кожне фото отримає оцінку якості 1–100</small>
+    </div>
+    <div class="previews">
+      @for (item of items(); track item.id) {
+        <div class="preview" [class]="item.state">
+          <img [src]="item.preview" [alt]="item.file.name" />
+          @switch (item.state) {
+            @case ('pending') {
+              <button type="button" class="remove" aria-label="Прибрати" (click)="remove(item)">✕</button>
+            }
+            @case ('uploading') {
+              <span class="status"><span class="spinner"></span>Оцінюю…</span>
+            }
+            @case ('done') {
+              <app-score-badge class="badge" [score]="item.photo!.qualityScore" />
+              <span class="verdict">{{ item.photo!.qualityVerdict }}</span>
+            }
+            @case ('error') {
+              <span class="status failed">Не вдалося 😕</span>
+              <button type="button" class="remove" aria-label="Прибрати" (click)="remove(item)">✕</button>
+            }
+          }
+        </div>
+      }
+    </div>
+  }
+
+  @if (withButton() && pendingCount()) {
+    <div class="actions">
+      <button type="button" class="btn btn-primary" [disabled]="busy()" (click)="uploadNow()">
+        {{ busy() ? 'Завантажую…' : 'Завантажити ' + pendingCount() + ' фото' }}
+      </button>
+    </div>
+  }
+</div>

@@ -1,0 +1,19 @@
+.subtitle {
+  margin: -10px 0 16px;
+  overflow-wrap: break-word;
+}
+
+.chosen {
+  margin: 12px 0 16px;
+  font-size: 15px;
+  text-align: center;
+}
+
+.actions {
+  align-items: center;
+}
+
+.hint {
+  flex: 1;
+  font-size: 13px;
+}

@@ -1,0 +1,59 @@
+<app-page-hero [category]="hero" [morph]="false">
+  <button class="btn btn-primary" type="button" (click)="openCreate()"><span class="ico" aria-hidden="true">💞</span> Створити нову пару</button>
+</app-page-hero>
+
+<main class="admin-bg">
+  <div class="page">
+    @if (loadError()) {
+      <p class="error">Не вдалося завантажити пари. Перевірте, що бекенд запущено.</p>
+    } @else if (loaded()) {
+      @if (overview(); as o) {
+        <app-usage-summary [overview]="o" />
+      }
+      <h2 class="section-title">👥 Пари <span class="count">{{ couples().length }}</span>
+        <small class="muted">· {{ usersCount() }} користувачів</small>
+      </h2>
+      <div class="list">
+        @for (c of couples(); track c.id) {
+          <app-couple-card [couple]="c" (reset)="askReset(c, $event)" (invite)="newInvite(c, $event)" (remove)="askDelete(c)" />
+        }
+      </div>
+    }
+  </div>
+</main>
+
+@if (creating()) {
+  <app-couple-form (closed)="closeCreate()" (created)="onCreated($event)" />
+}
+
+<!-- Щойно створена пара: паролі й посилання видно одразу -->
+@if (created(); as c) {
+  <app-modal size="wide" (closed)="created.set(null)">
+    <div class="modal-body">
+      <h2 class="form-heading">🎉 Пару створено!</h2>
+      <p class="muted intro">
+        Надішліть кожному <strong>його</strong> посилання на бота — після «Start» бот сам надішле пароль.
+        Або передайте пароль вручну. Пароль зникне з цієї сторінки, щойно людина його отримає чи вперше увійде.
+      </p>
+      <app-couple-card [couple]="c" [justCreated]="true" />
+    </div>
+  </app-modal>
+}
+
+<!-- "Ви впевнені?" для скидання пароля та видалення пари -->
+@if (confirmation(); as q) {
+  <app-modal size="narrow" (closed)="closeConfirmation()">
+    <div class="modal-body">
+      <h2 class="form-heading">{{ q.title }}</h2>
+      <p class="confirm-text">{{ q.text }}</p>
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+      <div class="actions">
+        <button class="btn" type="button" [class.btn-danger]="q.danger" [class.btn-primary]="!q.danger" [disabled]="busy()" (click)="confirm()">
+          {{ busy() ? 'Зачекайте…' : q.button }}
+        </button>
+      </div>
+    </div>
+  </app-modal>
+}

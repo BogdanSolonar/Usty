@@ -1,0 +1,202 @@
+.photo-field .hint {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Запропоновані фото ===== */
+.suggestion-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 4px; /* місце для збільшення і світіння вибраного фото */
+}
+
+.suggestion {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f1eaee;
+  cursor: pointer;
+  transition: transform 0.25s ease, opacity 0.25s ease, filter 0.25s ease, box-shadow 0.25s ease;
+}
+
+.suggestion:hover {
+  transform: scale(1.02);
+}
+
+.suggestion img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* коли одне фото обране — решта приглушені (при наведенні оживають) */
+.has-choice .suggestion:not(.selected) {
+  opacity: 0.5;
+  filter: grayscale(0.35);
+}
+
+.has-choice .suggestion:not(.selected):hover {
+  opacity: 0.85;
+  filter: none;
+}
+
+/* вибране: кольорова рамка, легке збільшення, м'яке світіння */
+.suggestion.selected {
+  z-index: 1;
+  transform: scale(1.05);
+  box-shadow:
+    0 0 0 3px white,
+    0 0 0 6px var(--accent),
+    0 8px 22px rgba(214, 51, 108, 0.4);
+}
+
+.check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: white;
+  font-size: 15px;
+  font-weight: 800;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px white, 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: pop 0.25s ease;
+}
+
+/* сірі прямокутники, що "дихають", поки йде пошук */
+.skeleton {
+  cursor: default;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.credit {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ===== Свій файл ===== */
+.upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+  padding: 12px 14px;
+  border: 2px dashed #e7a9c0;
+  border-radius: 14px;
+  background: #fff6f9;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.upload:hover,
+.upload.dragging {
+  border-color: var(--accent);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(214, 51, 108, 0.1);
+}
+
+.upload-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: white;
+  background: linear-gradient(135deg, #f06595, var(--accent));
+  box-shadow: 0 4px 10px rgba(214, 51, 108, 0.3);
+}
+
+.upload-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.upload-text strong {
+  font-size: 15px;
+}
+
+.upload-text small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* прев'ю власного файлу */
+.own-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 4px;
+  padding: 10px;
+  border-radius: 14px;
+  background: #fbf5f7;
+  border: 1.5px solid #f0e4ea;
+  animation: pop 0.25s ease;
+}
+
+.own-preview img {
+  flex: none;
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 0 0 3px white, 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.own-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.own-info small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 400;
+}
+
+.own-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.own-actions .btn {
+  font-weight: 500;
+}
+
+@media (max-width: 420px) {
+  .own-preview img {
+    width: 92px;
+    height: 70px;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}

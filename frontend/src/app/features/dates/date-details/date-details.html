@@ -1,0 +1,120 @@
+@let d = current();
+<app-entry-details
+  [title]="d.title"
+  [imageUrl]="d.coverImageUrl"
+  emoji="🌹"
+  [createdAt]="d.createdAt"
+  [description]="d.description"
+  [deleteFn]="deleteFn"
+  [wide]="isCompleted()"
+  (closed)="closed.emit()"
+  (edit)="edit.emit()"
+  (deleted)="deleted.emit(d.id)"
+>
+  <!-- Під заголовком: автор і стан побачення -->
+  <div detailsMeta class="meta">
+    <span class="person">
+      <app-user-avatar [user]="d.createdBy" [size]="28" />
+      Ідея від <strong>{{ d.createdBy.name }}</strong>
+    </span>
+
+    @if (d.status === 'PLANNED') {
+      <div class="state planned">
+        <div class="state-info">
+          <strong>📅 Заплановано на {{ d.plannedDate | date: 'EEEE, d MMMM y' }}</strong>
+          @if (d.initiatedBy; as who) {
+            <span class="person small">
+              <app-user-avatar [user]="who" [size]="22" />
+              {{ who.name }} {{ plannedVerb(who) }}
+            </span>
+          }
+          @if (d.plannedNote) {
+            <p class="note">💭 {{ d.plannedNote }}</p>
+          }
+        </div>
+        <div class="state-actions">
+          <button class="btn btn-ghost btn-sm" type="button" (click)="replan.emit()">Змінити дату</button>
+          <button class="btn btn-ghost btn-sm" type="button" (click)="cancelPlan()">Скасувати план</button>
+        </div>
+      </div>
+    }
+
+    @if (d.status === 'COMPLETED') {
+      <div class="state completed">
+        <strong>✅ Реалізовано {{ d.completedAt | date: 'd MMMM y' }}</strong>
+        @if (d.initiatedBy; as who) {
+          <span class="person small">
+            <app-user-avatar [user]="who" [size]="22" />
+            {{ who.name }} {{ plannedVerb(who) }}
+          </span>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Історія: усі фото + дозавантаження -->
+  @if (isCompleted()) {
+    <section class="gallery-section">
+      @if (d.photos.length) {
+        <h3>Фото з побачення <span class="muted">({{ d.photos.length }})</span></h3>
+        <div class="gallery">
+          @for (photo of d.photos; track photo.id) {
+            <button type="button" class="gallery-item" (click)="viewing.set(photo)">
+              <img [src]="photo.photoUrl" alt="Фото з побачення" loading="lazy" />
+              <app-score-badge class="score" [score]="photo.qualityScore" />
+              <app-user-avatar class="uploader" [user]="photo.uploadedBy" [size]="28" />
+            </button>
+          }
+        </div>
+      }
+      <app-photo-uploader [dateId]="d.id" [withButton]="true" (uploaded)="onPhotoUploaded($event)" />
+    </section>
+  }
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (!isCompleted()) {
+    <button detailsActions class="btn btn-success" type="button" (click)="completing.set(true)">✓ Реалізовано</button>
+  }
+</app-entry-details>
+
+<!-- "Реалізовано" — окреме вікно поверх цього -->
+@if (completing()) {
+  <app-complete-dialog [date]="d" (closed)="completing.set(false)" (completed)="completed.emit($event)" />
+}
+
+<!-- Перегляд фото на весь екран з деталями оцінки -->
+@if (viewing(); as photo) {
+  <div class="lightbox" (click)="viewing.set(null)">
+    <div class="lightbox-inner" (click)="$event.stopPropagation()">
+      <button class="lightbox-close" type="button" aria-label="Закрити" (click)="viewing.set(null)">✕</button>
+      <img [src]="photo.photoUrl" alt="Фото з побачення" />
+      <div class="lightbox-info">
+        <div class="lightbox-head">
+          <app-score-badge [score]="photo.qualityScore" />
+          <div>
+            <strong>{{ photo.qualityVerdict }}</strong>
+            <span class="person small">
+              <app-user-avatar [user]="photo.uploadedBy" [size]="20" />
+              завантажив(ла) {{ photo.uploadedBy.name }}, {{ photo.uploadedAt | date: 'd MMM, HH:mm' }}
+            </span>
+          </div>
+        </div>
+        @if (photo.qualityBreakdown; as b) {
+          <div class="bars">
+            @for (c of criteria; track c.key) {
+              <span>{{ c.label }}</span>
+              <span class="bar"><span [style.width.%]="b[c.key]"></span></span>
+              <span class="bar-value">{{ b[c.key] }}</span>
+            }
+          </div>
+        }
+        @if (photo.uploadedBy.id === me()?.id) {
+          <button class="btn btn-ghost danger-text btn-sm" type="button" (click)="deletePhoto(photo)">Видалити фото</button>
+        }
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,32 @@
+<app-modal size="narrow" (closed)="closed.emit()">
+  <div class="modal-body">
+    <h2 class="form-heading">✨ Реалізувати</h2>
+    <p class="muted subtitle">«{{ date().title }}» — оберіть день</p>
+
+    <app-calendar [(value)]="day" [min]="today" />
+
+    <p class="chosen">
+      @if (day(); as d) {
+        Обрано: <strong>{{ d | date: 'EEEE, d MMMM y' }}</strong>
+      } @else {
+        <span class="muted">Оберіть дату в календарі</span>
+      }
+    </p>
+
+    <label class="field">
+      <span>Примітка <small class="muted">(необов'язково)</small></span>
+      <textarea name="note" [(ngModel)]="note" rows="3" maxlength="2000" placeholder="Що взяти, о котрій зустрічаємось…"></textarea>
+    </label>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <div class="actions">
+      <span class="hint muted">📨 Прийде сповіщення в Telegram</span>
+      <button type="button" class="btn btn-primary" [disabled]="!day() || saving()" (click)="confirm()">
+        {{ saving() ? 'Планую…' : 'Запланувати' }}
+      </button>
+    </div>
+  </div>
+</app-modal>

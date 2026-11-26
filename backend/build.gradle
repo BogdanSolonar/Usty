@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.2.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.planning'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        // Строго під JDK, встановлений на машині (Java 17)
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // REST API (контролери, JSON)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // Робота з БД через JPA/Hibernate (репозиторії)
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // Перевірка вхідних даних (@NotBlank тощо)
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // Вхід і захист API: Spring Security + перевірка JWT-токенів (Bearer)
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    // Читання WEBP і "складних" JPEG (CMYK) для оцінки якості фото
+    implementation 'com.twelvemonkeys.imageio:imageio-webp:3.12.0'
+    implementation 'com.twelvemonkeys.imageio:imageio-jpeg:3.12.0'
+    // OpenCV (з готовими native-бібліотеками для Windows/Linux/macOS) — пошук облич на фото
+    implementation 'org.openpnp:opencv:4.9.0-0'
+    // Драйвер PostgreSQL
+    runtimeOnly 'org.postgresql:postgresql'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// Вихідний код у UTF-8 (на Windows Java 17 інакше читає файли як windows-1251
+// і ламає кириличні рядки в коді)
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

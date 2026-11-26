@@ -1,0 +1,36 @@
+# Вебсервер Usty: один вхід для всього сайту.
+#   /api/*      -> бекенд (Spring Boot)
+#   /uploads/*  -> бекенд (фото з томa data/uploads)
+#   решта       -> зібраний Angular (/srv), невідомі шляхи -> index.html (маршрути Angular)
+# SITE_ADDRESS з .env: домен -> автоматичний HTTPS (Let's Encrypt); ":80" -> звичайний http за IP.
+{$SITE_ADDRESS::80} {
+	encode zstd gzip
+
+	# фото з побачень: до 100 МБ за раз (як і на бекенді)
+	request_body {
+		max_size 110MB
+	}
+
+	handle /api/* {
+		reverse_proxy backend:8080
+	}
+
+	handle /uploads/* {
+		reverse_proxy backend:8080
+	}
+
+	handle {
+		root * /srv
+		# файли з хешем у назві (main-ABC123.js) не змінюються — кешуємо надовго
+		@hashed path_regexp \.[0-9a-zA-Z]{8,}\.(js|css)$|/media/
+		header @hashed Cache-Control "public, max-age=31536000, immutable"
+		try_files {path} /index.html
+		file_server
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+}

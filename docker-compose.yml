@@ -1,0 +1,37 @@
+services:
+  # База даних — запускається завжди: docker compose up -d
+  db:
+    image: postgres:17
+    container_name: planning-db
+    environment:
+      POSTGRES_DB: planning
+      POSTGRES_USER: planning
+      POSTGRES_PASSWORD: planning
+    ports:
+      - "5432:5432"
+    volumes:
+      # Дані зберігаються в docker-томі й не зникають після перезапуску контейнера
+      - db-data:/var/lib/postgresql/data
+
+  # Бекенд у Docker — лише за бажанням: docker compose --profile full up -d --build
+  # (звичайний режим розробки — бекенд через .\gradlew.bat bootRun, фото в backend/uploads)
+  backend:
+    build: ./backend
+    container_name: planning-backend
+    profiles: ["full"]
+    depends_on:
+      - db
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/planning
+      UPLOADS_DIR: /app/uploads
+    ports:
+      - "8080:8080"
+    volumes:
+      # аватарки, обкладинки й фото з побачень — у томі uploads-data, віддаються за адресою /uploads/...
+      - uploads-data:/app/uploads
+      # секрети (паролі, JWT, Telegram, Pixabay) лише монтуються, в образ не потрапляють
+      - ./backend/secrets.properties:/app/secrets.properties:ro
+
+volumes:
+  db-data:
+  uploads-data:

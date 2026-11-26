@@ -1,0 +1,198 @@
+/* Глобальні стилі: лише те, що спільне для всього додатку.
+   Стилі окремих екранів і компонентів лежать поруч із ними (*.css у features/ і shared/). */
+
+/* ============ Кольори й базові налаштування ============ */
+:root {
+  --accent: #d6336c;
+  --accent-dark: #b02457;
+  --text: #2b2230;
+  --muted: #8a7f8e;
+  --bg: #fbf7f5;
+  --card: #ffffff;
+  --radius: 18px;
+  --shadow: 0 10px 30px rgba(43, 34, 48, 0.12);
+  --title-font: Georgia, 'Times New Roman', serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+h1,
+h2 {
+  font-family: var(--title-font);
+  font-weight: 600;
+}
+
+a {
+  color: var(--accent);
+}
+
+.muted,
+.hint {
+  color: var(--muted);
+}
+
+.error {
+  color: #c62828;
+}
+
+/* ============ Кнопки ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 6px 18px rgba(214, 51, 108, 0.35);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+
+.btn-ghost {
+  background: #f3edf0;
+  color: var(--text);
+}
+
+.btn-danger {
+  background: #c62828;
+  color: white;
+}
+
+/* зелена: "Реалізовано", "Подаровано", "Здійснилась" */
+.btn-success {
+  background: #16a34a;
+  color: white;
+  box-shadow: 0 6px 18px rgba(22, 163, 74, 0.35);
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #15803d;
+}
+
+.btn-sm {
+  padding: 7px 14px;
+  font-size: 14px;
+}
+
+.danger-text {
+  color: #c62828;
+}
+
+/* напівпрозора кнопка поверх фото */
+.btn-glass {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+/* ============ Вміст модальних вікон і поля форм ============ */
+.modal-body {
+  padding: 24px 28px 28px;
+}
+
+.modal-body h2 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  padding-right: 30px;
+}
+
+.modal-body h2.form-heading {
+  margin-bottom: 18px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.field > span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #e3d9de;
+  border-radius: 12px;
+  font: inherit;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+@media (max-width: 500px) {
+  .modal-body {
+    padding: 20px;
+  }
+}
+
+/* ============ Плавний перехід між сторінками ============ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+}
+
+::view-transition-group(*) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::view-transition-group(*) {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,50 @@
+.details-photo {
+  display: block;
+  width: 100%;
+  height: clamp(150px, 34vh, 340px);
+  object-fit: cover;
+}
+
+.details-photo.placeholder {
+  display: grid;
+  place-items: center;
+  height: clamp(120px, 22vh, 200px);
+  font-size: 72px;
+  background: linear-gradient(135deg, #f8d7e3, #e7d8f5);
+}
+
+.details-date {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.details-description {
+  margin: 14px 0 0;
+  white-space: pre-wrap; /* зберігаємо переноси рядків з опису */
+  overflow-wrap: anywhere;
+  line-height: 1.55;
+}
+
+.actions {
+  flex-wrap: wrap;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.confirm-box {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #fdecec;
+}
+
+.confirm-box p {
+  margin: 0;
+}
+
+.confirm-box .actions {
+  margin-top: 12px;
+}
